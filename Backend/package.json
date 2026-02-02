@@ -1,0 +1,13 @@
+{
+  "name": "wisperhub",
+  "version": "1.0.0",
+  "description": "A minimal anonymous social backend with real-time posts, comments, and likes built using Node.js, Express, MongoDB",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "author": "Rohan Reddy",
+  "license": "ISC"
+}
