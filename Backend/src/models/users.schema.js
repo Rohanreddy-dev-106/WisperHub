@@ -40,11 +40,9 @@ const UsersSchema = new Schema({
         default: null
     },
 
-    Banreason: {
-        type: String,
-        minlength: 10,
-        maxlength: 100,
-        default: null
+    Baninfo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Ban"
     },
 
     Role: {
