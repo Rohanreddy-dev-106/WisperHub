@@ -3,6 +3,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import { startBanCron }from "./src/services/cron.job.js"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,6 +19,8 @@ const rateLimitMiddleware = rateLimit({
     max: 100,
     message: "You have reached the request limit. Please try again after 1 hour."
 })
+
+startBanCron()
 server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
 
 
