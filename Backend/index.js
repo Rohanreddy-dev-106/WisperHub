@@ -3,7 +3,8 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import { startBanCron }from "./src/services/cron.job.js"
+import useragent from "express-useragent";
+import { startBanCron } from "./src/services/cron.job.js"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -12,15 +13,26 @@ server.use(express.json())//Postman
 server.use(express.urlencoded({ extended: true }));//Data comming from HTML forms
 server.use(cookieParser())
 server.use(cors({
-    origin: "*" // allow all origins
+  origin: "*" // allow all origins
 }));
+// index.js / server.js
+server.set("trust proxy", true);
 const rateLimitMiddleware = rateLimit({
-    windowMs: 1 * 60 * 60 * 1000,
-    max: 100,
-    message: "You have reached the request limit. Please try again after 1 hour."
+  windowMs: 1 * 60 * 60 * 1000,
+  max: 100,
+  message: "You have reached the request limit. Please try again after 1 hour."
 })
+server.use(useragent.express());
 
-startBanCron()
+try {
+  startBanCron()
+}
+catch (error) {
+  console.log(error.message);
+
+}
+
+
 server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
 
 
@@ -29,7 +41,7 @@ server.use("/api/user", UserRoutes);
 
 
 server.use((req, res, next) => {
-    res.status(404).send(` <!DOCTYPE html>
+  res.status(404).send(` <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />

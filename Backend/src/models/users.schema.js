@@ -1,15 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-
 const UsersSchema = new Schema({
-    UserName: {
-        type: String,
-        minlength: 5,
-        maxlength: 20,
-        required: true,
-        unique: true,
-        trim: true
-    },
-
     Uniqueid: {
         type: String,
         required: true,
@@ -42,19 +32,20 @@ const UsersSchema = new Schema({
 
     Baninfo: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Ban"
+        ref: "Ban"
+    },
+    Bio: {
+        type: String,
+        minlength: 20,
+        maxlength: 60,
+        required: true
     },
 
-    Role: {
-        type: String,
-        required: true,
-        enum: ["user", "admin", "manager"],
-        default: "user"
-    },
-
-    RefreshToken: {
-        type: String,
-        default: null
+    Age: {
+        type: Number,
+        min: 18,
+        max: 60,
+        required: true
     },
 
     AccessToken: {
