@@ -6,11 +6,11 @@ const UserRoutes= express.Router();
 
 const User=new UserController();
 
-UserRoutes.post("/register",jwtAuth,(req,res,next)=>{
+UserRoutes.post("/register",(req,res,next)=>{
     User.Register(req,res,next);
 })
 
-UserRoutes.post("/login",jwtAuth,(req,res,next)=>{
+UserRoutes.post("/login",(req,res,next)=>{
     User.Login(req,res,next);
 })
 

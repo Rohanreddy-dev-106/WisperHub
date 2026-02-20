@@ -1,9 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 const UsersSchema = new Schema({
+    Username: {
+        type: String,
+        default: null
+    },
     Uniqueid: {
         type: String,
         required: true,
         unique: true
+    },
+    Password: {
+        type: String,
+        required: true,
+        minlength: 8,
     },
 
     Ip: {
@@ -32,7 +41,8 @@ const UsersSchema = new Schema({
 
     Baninfo: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Ban"
+        ref: "Ban",
+        default: null
     },
     Bio: {
         type: String,
@@ -47,11 +57,6 @@ const UsersSchema = new Schema({
         max: 60,
         required: true
     },
-
-    AccessToken: {
-        type: String,
-        default: null
-    }
 
 }, { timestamps: true });
 

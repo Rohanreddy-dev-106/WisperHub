@@ -3,7 +3,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import useragent from "express-useragent";
+import { UAParser } from "ua-parser-js";
 import { startBanCron } from "./src/services/cron.job.js"
 import dotenv from "dotenv";
 dotenv.config();
@@ -16,13 +16,18 @@ server.use(cors({
   origin: "*" // allow all origins
 }));
 // index.js / server.js
-server.set("trust proxy", true);
+server.set("trust proxy", false);
 const rateLimitMiddleware = rateLimit({
   windowMs: 1 * 60 * 60 * 1000,
   max: 100,
   message: "You have reached the request limit. Please try again after 1 hour."
 })
-server.use(useragent.express());
+// UA Parser Middleware
+server.use((req, res, next) => {
+  const parser = new UAParser(req.headers["user-agent"]);
+  req.useragent = parser.getResult(); 
+  next();
+});
 
 try {
   startBanCron()
@@ -33,7 +38,7 @@ catch (error) {
 }
 
 
-server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
+//server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
 
 
 server.use("/api/user", UserRoutes);
