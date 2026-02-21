@@ -31,14 +31,14 @@ export default class UserController {
                     message: "Unique_id is not Generated"
                 });
             }
-             let username = uniqueid.slice(1, uniqueid.search(/mlv/));
+            let username = uniqueid.slice(1, uniqueid.search(/mlv/));
             const ip =
                 req.headers["x-forwarded-for"]?.split(",")[0] ||
                 req.ip;
             const { browser, os, device } = req.useragent;
             const deviceName = `${device.vendor || "Unknown"} ${device.model || "Device"} | ${os.name || "Unknown OS"} | ${browser.name || "Unknown Browser"}`;
             const hashedPassword = await bcrypt.hash(password, 12);
-          
+
             const user = await this._userrepository.register({
                 Uniqueid: uniqueid,
                 Ip: ip,
@@ -57,6 +57,8 @@ export default class UserController {
             })
         }
         catch (error) {
+            console.log(error);
+            
             if (error.message === "USER_ALREADY_EXISTS") {
                 return res.status(409).json({ message: "User already exists" });
             }

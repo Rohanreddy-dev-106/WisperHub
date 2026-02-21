@@ -1,4 +1,5 @@
 import UserRoutes from "./src/routes/users.routs.js";
+import BanRoutes from "./src/routes/ban.routs.js";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -42,7 +43,7 @@ catch (error) {
 
 
 server.use("/api/user", UserRoutes);
-
+server.use("/api/ban",BanRoutes);
 
 
 server.use((req, res, next) => {

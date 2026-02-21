@@ -9,12 +9,12 @@ export default function jwtAuth(req, res, next) {
 
     try {
         const payload = jwt.verify(token, process.env.ACCESSTOKEN_KEY);
-        console.log("jwtverfy:",payload);
-        
+        console.log("jwtverfy:", payload);
+
 
         req.user = {
             UserID: payload.UserID,
-            email: payload.email,
+            uniqueid: payload.uniqueid
         };
 
         next();

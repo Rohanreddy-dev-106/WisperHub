@@ -2,12 +2,12 @@ import mongoose, { Schema } from "mongoose";
 
 const BanSchema = new Schema(
     {
-        ip: {
+        ip: [{
             type: String,
             trim: true,
             default: null,
             index: true
-        },
+        }],
 
         anonymousId: {
             type: String,
