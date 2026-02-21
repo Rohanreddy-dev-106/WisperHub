@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import BanModel from "../models/ban.user.js";
 import userModel from "../models/users.schema.js";
-import banUser from "../models/ban.user.js";
 
 export default class Banrepository {
 
