@@ -1,9 +1,6 @@
 import PostRepo from "../repo/post.repo.js";
 
 const postRepo = new PostRepo();
-
-//TODO: Testing is not finished...
-
 export default class PostController {
 
     async createPost(req, res) {
