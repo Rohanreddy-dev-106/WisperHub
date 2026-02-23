@@ -6,8 +6,7 @@ const LikeRoutes = express.Router();
 const Like = new LikesController();
 
 // toggle like / dislike
-LikeRoutes.post("/toggle/:postId", jwtAuth, (req, res, next) => {
+LikeRoutes.post("/create-like/:postId", jwtAuth, (req, res, next) => {
     Like.CreateLike(req, res, next);
 });
-
 export default LikeRoutes;

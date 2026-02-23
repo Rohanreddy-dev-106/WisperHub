@@ -9,8 +9,8 @@ export default class Likes {
         const { postId } = req.params;
         const authorId = req.user.UserID
         try {
-            const like = await this._Likerepo.createlikes({ authorId, postId });
-            return res.status(201).json({ success: true, message: like });
+            const like = await this._Likerepo.createlikes(authorId, postId);
+            return res.status(201).json({ success: true, message: like.action });
         }
         catch (error) {
             return res.status(500).json({ success: false, message: error.message });
