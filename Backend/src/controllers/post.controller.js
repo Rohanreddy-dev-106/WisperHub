@@ -27,7 +27,20 @@ export default class PostController {
         try {
             const { postId } = req.params;
             const { text } = req.body;
-            const userId = req.user._id;
+            const userId = req.user.UserID;
+            let postowner = await postRepo.findById(postId);
+            if (!postowner) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Post not found"
+                });
+            }
+            if (postowner.authorId.toString() !== userId.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Unauthorized"
+                });
+            }
 
             const updatedPost = await postRepo.updatePost(postId, userId, text);
 
@@ -57,7 +70,19 @@ export default class PostController {
         try {
             const { postId } = req.params;
             const userId = req.user.UserID
-
+            let postowner = await postRepo.findById(postId);
+            if (!postowner) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Post not found"
+                });
+            }
+            if (postowner?.authorId.toString() !== userId.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Unauthorized"
+                });
+            }
             const deleted = await postRepo.deletePost(postId, userId);
 
             if (!deleted) {
