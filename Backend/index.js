@@ -2,17 +2,23 @@ import UserRoutes from "./src/routes/users.routs.js";
 import BanRoutes from "./src/routes/ban.routs.js";
 import PostRoutes from "./src/routes/post.routs.js";
 import LikeRoutes from "./src/routes/like.routs.js";
-import CommentRoutes from "./src/routes/comment.routes.js"
+import CommentRoutes from "./src/routes/comment.routes.js";
+import AudienceRoutes from "./src/routes/follow.routs.js";
+import { startBanCron } from "./src/services/cron.job.js"
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { UAParser } from "ua-parser-js";
-import { startBanCron } from "./src/services/cron.job.js"
+import { readFileSync } from 'fs';
+import swagger from "swagger-ui-express";
 import dotenv from "dotenv";
 dotenv.config();
 
 const server = express();
+//Api Documentation using swagger..
+const data = JSON.parse(readFileSync("./swagger_ui.json", 'utf8'));
+server.use("/api-doc-wisperhub", swagger.serve, swagger.setup(data))
 server.use(express.json())//Postman
 server.use(express.urlencoded({ extended: true }));//Data comming from HTML forms
 server.use(cookieParser())
@@ -50,6 +56,7 @@ server.use("/api/ban",BanRoutes);
 server.use("/api/post",PostRoutes);
 server.use("/api/like",LikeRoutes);
 server.use("/api/comment",CommentRoutes);
+server.use("/api/audience",AudienceRoutes);
 
 
 server.use((req, res, next) => {
@@ -161,7 +168,7 @@ server.use((req, res, next) => {
     Please refer to the official documentation.
   </div>
 
-  <a href="/docs" class="btn">Go to API Docs</a>
+  <a href="/api-doc-wisperhub" class="btn">Go to API Docs</a>
 
   <footer>
     © 2026 WisperHub • Privacy First

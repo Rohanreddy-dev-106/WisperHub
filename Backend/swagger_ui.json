@@ -1,0 +1,249 @@
+{
+  "openapi": "3.0.0",
+
+  "info": {
+    "title": "WisperHub",
+    "version": "1.0.0",
+    "description": "WisperHub is an anonymous social network built for developers and tech geeks.\n\nNo usernames that matter. No public profiles. No noise.\n\nJust ideas, code, questions, and honest conversations — shared anonymously.\n\nPrivacy-first • Minimal • Signal over noise.",
+    "contact": {
+      "name": "WisperHub Core",
+      "url": "https://localhost"
+    }
+  },
+
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local development environment"
+    }
+  ],
+
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Anonymous authentication and session lifecycle"
+    },
+    {
+      "name": "Posts",
+      "description": "Anonymous posts, edits, and deletions"
+    },
+    {
+      "name": "Comments",
+      "description": "Anonymous threaded discussions"
+    },
+    {
+      "name": "Likes",
+      "description": "Lightweight anonymous reactions"
+    },
+    {
+      "name": "Audience",
+      "description": "Follow and unfollow without identity exposure"
+    },
+    {
+      "name": "Moderation",
+      "description": "Platform safety, abuse prevention, and bans"
+    }
+  ],
+
+  "paths": {
+
+
+    "/user/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Create an anonymous account",
+        "description": "Registers a new anonymous user. No personal or public identity is exposed.",
+        "responses": {
+          "201": {
+            "description": "Anonymous account created successfully"
+          }
+        }
+      }
+    },
+
+    "/user/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login anonymously",
+        "description": "Authenticates an anonymous user and returns a session token.",
+        "responses": {
+          "200": {
+            "description": "Session established"
+          }
+        }
+      }
+    },
+
+   
+
+    "/post/create": {
+      "post": {
+        "tags": ["Posts"],
+        "summary": "Create an anonymous post",
+        "description": "Publish a new post without revealing identity.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Post published successfully"
+          }
+        }
+      }
+    },
+
+    "/post/update/{postId}": {
+      "put": {
+        "tags": ["Posts"],
+        "summary": "Edit an anonymous post",
+        "description": "Edit a post created by the authenticated anonymous user.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post updated successfully"
+          }
+        }
+      }
+    },
+
+    "/post/delete/{postId}": {
+      "delete": {
+        "tags": ["Posts"],
+        "summary": "Delete an anonymous post",
+        "description": "Remove a post owned by the authenticated user.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post deleted successfully"
+          }
+        }
+      }
+    },
+
+
+
+    "/comment/create-comment": {
+      "post": {
+        "tags": ["Comments"],
+        "summary": "Add an anonymous comment",
+        "description": "Reply anonymously to a post or discussion thread.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Comment added successfully"
+          }
+        }
+      }
+    },
+
+
+
+    "/like/create-like/{postId}": {
+      "post": {
+        "tags": ["Likes"],
+        "summary": "Toggle anonymous like",
+        "description": "Like or unlike a post anonymously.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reaction updated"
+          }
+        }
+      }
+    },
+
+   
+
+    "/audience/follow/{targetUserId}": {
+      "post": {
+        "tags": ["Audience"],
+        "summary": "Follow anonymously",
+        "description": "Follow another user without exposing identity.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "targetUserId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User followed successfully"
+          }
+        }
+      }
+    },
+
+    "/audience/unfollow/{targetUserId}": {
+      "delete": {
+        "tags": ["Audience"],
+        "summary": "Unfollow anonymously",
+        "description": "Remove an anonymous follow relationship.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "targetUserId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unfollowed successfully"
+          }
+        }
+      }
+    },
+
+   
+
+    "/ban": {
+      "post": {
+        "tags": ["Moderation"],
+        "summary": "Ban a user",
+        "description": "Restrict a user for violating platform rules.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User banned successfully"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
