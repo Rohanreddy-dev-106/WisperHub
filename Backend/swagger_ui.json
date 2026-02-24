@@ -1,248 +1,685 @@
 {
   "openapi": "3.0.0",
-
   "info": {
-    "title": "WisperHub",
+    "title": "WisperHub API",
+    "description": "Official REST API documentation for WisperHub — an anonymous social network. All protected routes require a valid JWT token passed via HTTP-only cookie.",
     "version": "1.0.0",
-    "description": "WisperHub is an anonymous social network built for developers and tech geeks.\n\nNo usernames that matter. No public profiles. No noise.\n\nJust ideas, code, questions, and honest conversations — shared anonymously.\n\nPrivacy-first • Minimal • Signal over noise.",
     "contact": {
-      "name": "WisperHub Core",
-      "url": "https://localhost"
+      "name": "WisperHub Support"
     }
   },
-
   "servers": [
     {
-      "url": "http://localhost:3000/api",
-      "description": "Local development environment"
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
     }
   ],
-
   "tags": [
     {
       "name": "Auth",
-      "description": "Anonymous authentication and session lifecycle"
+      "description": "User registration, login and logout"
+    },
+    {
+      "name": "Users",
+      "description": "User account management"
     },
     {
       "name": "Posts",
-      "description": "Anonymous posts, edits, and deletions"
-    },
-    {
-      "name": "Comments",
-      "description": "Anonymous threaded discussions"
+      "description": "Create, read, update and delete posts"
     },
     {
       "name": "Likes",
-      "description": "Lightweight anonymous reactions"
+      "description": "Like and dislike posts"
+    },
+    {
+      "name": "Comments",
+      "description": "Comment on posts"
     },
     {
       "name": "Audience",
-      "description": "Follow and unfollow without identity exposure"
+      "description": "Follow and unfollow users"
     },
     {
       "name": "Moderation",
-      "description": "Platform safety, abuse prevention, and bans"
+      "description": "Admin-level user banning"
     }
   ],
-
-  "paths": {
-
-
-    "/user/register": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Create an anonymous account",
-        "description": "Registers a new anonymous user. No personal or public identity is exposed.",
-        "responses": {
-          "201": {
-            "description": "Anonymous account created successfully"
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token",
+        "description": "JWT token stored in HTTP-only cookie. Obtained after login."
+      }
+    },
+    "schemas": {
+      "SuccessMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Operation successful"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["username", "email", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "john_doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "StrongPass@123"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "StrongPass@123"
+          }
+        }
+      },
+      "PostCreateRequest": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "This is my first post on WisperHub!"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://cdn.example.com/image.jpg"
+          }
+        }
+      },
+      "PostUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Updated post content"
+          }
+        }
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "664f1c2e8b1a2c3d4e5f6789" },
+          "content": { "type": "string", "example": "Hello WisperHub!" },
+          "author": { "type": "string", "example": "664f1c2e8b1a2c3d4e5f1111" },
+          "likes": { "type": "integer", "example": 42 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CommentCreateRequest": {
+        "type": "object",
+        "required": ["postId", "content"],
+        "properties": {
+          "postId": {
+            "type": "string",
+            "example": "664f1c2e8b1a2c3d4e5f6789"
+          },
+          "content": {
+            "type": "string",
+            "example": "Great post!"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "664f1c2e8b1a2c3d4e5f9999" },
+          "postId": { "type": "string", "example": "664f1c2e8b1a2c3d4e5f6789" },
+          "author": { "type": "string", "example": "664f1c2e8b1a2c3d4e5f1111" },
+          "content": { "type": "string", "example": "Great post!" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BanRequest": {
+        "type": "object",
+        "required": ["userId", "reason"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "664f1c2e8b1a2c3d4e5f1111"
+          },
+          "reason": {
+            "type": "string",
+            "example": "Violation of community guidelines"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Ban duration in hours. Omit for permanent ban.",
+            "example": 24
           }
         }
       }
     },
-
-    "/user/login": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Login anonymously",
-        "description": "Authenticates an anonymous user and returns a session token.",
-        "responses": {
-          "200": {
-            "description": "Session established"
+    "responses": {
+      "Unauthorized": {
+        "description": "Unauthorized — JWT token missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": { "success": false, "message": "Unauthorized access" }
           }
         }
-      }
-    },
-
-   
-
-    "/post/create": {
-      "post": {
-        "tags": ["Posts"],
-        "summary": "Create an anonymous post",
-        "description": "Publish a new post without revealing identity.",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "201": {
-            "description": "Post published successfully"
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": { "success": false, "message": "Resource not found" }
           }
         }
-      }
-    },
-
-    "/post/update/{postId}": {
-      "put": {
-        "tags": ["Posts"],
-        "summary": "Edit an anonymous post",
-        "description": "Edit a post created by the authenticated anonymous user.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "postId",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post updated successfully"
-          }
-        }
-      }
-    },
-
-    "/post/delete/{postId}": {
-      "delete": {
-        "tags": ["Posts"],
-        "summary": "Delete an anonymous post",
-        "description": "Remove a post owned by the authenticated user.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "postId",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post deleted successfully"
-          }
-        }
-      }
-    },
-
-
-
-    "/comment/create-comment": {
-      "post": {
-        "tags": ["Comments"],
-        "summary": "Add an anonymous comment",
-        "description": "Reply anonymously to a post or discussion thread.",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "201": {
-            "description": "Comment added successfully"
-          }
-        }
-      }
-    },
-
-
-
-    "/like/create-like/{postId}": {
-      "post": {
-        "tags": ["Likes"],
-        "summary": "Toggle anonymous like",
-        "description": "Like or unlike a post anonymously.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "postId",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Reaction updated"
-          }
-        }
-      }
-    },
-
-   
-
-    "/audience/follow/{targetUserId}": {
-      "post": {
-        "tags": ["Audience"],
-        "summary": "Follow anonymously",
-        "description": "Follow another user without exposing identity.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "targetUserId",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User followed successfully"
-          }
-        }
-      }
-    },
-
-    "/audience/unfollow/{targetUserId}": {
-      "delete": {
-        "tags": ["Audience"],
-        "summary": "Unfollow anonymously",
-        "description": "Remove an anonymous follow relationship.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "targetUserId",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User unfollowed successfully"
-          }
-        }
-      }
-    },
-
-   
-
-    "/ban": {
-      "post": {
-        "tags": ["Moderation"],
-        "summary": "Ban a user",
-        "description": "Restrict a user for violating platform rules.",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "User banned successfully"
+      },
+      "InternalError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+            "example": { "success": false, "message": "Something went wrong" }
           }
         }
       }
     }
   },
-
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+  "paths": {
+    "/api/user/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "description": "Creates a new user account. No authentication required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "User registered successfully" }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or email already in use",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "description": "Authenticates the user and sets a JWT token in an HTTP-only cookie.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful. JWT cookie is set.",
+            "headers": {
+              "Set-Cookie": {
+                "description": "HTTP-only JWT cookie",
+                "schema": { "type": "string" }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Login successful" }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "delete": {
+        "tags": ["Auth"],
+        "summary": "Logout",
+        "description": "Clears the JWT cookie and invalidates the session. Requires authentication.",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Logged out successfully" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/post/create": {
+      "post": {
+        "tags": ["Posts"],
+        "summary": "Create a new post",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Post" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/post/update/{postId}": {
+      "put": {
+        "tags": ["Posts"],
+        "summary": "Update a post",
+        "description": "Only the author of the post can update it.",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f6789"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Post" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/post/get/{userId}": {
+      "get": {
+        "tags": ["Posts"],
+        "summary": "Get all posts by a user",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f1111"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Post" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/post/delete/{postId}": {
+      "delete": {
+        "tags": ["Posts"],
+        "summary": "Delete a post",
+        "description": "Only the author of the post can delete it.",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f6789"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Post deleted successfully" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/like/create-like/{postId}": {
+      "post": {
+        "tags": ["Likes"],
+        "summary": "Toggle like / dislike on a post",
+        "description": "If the user has not liked the post, it adds a like. If already liked, it removes the like (toggle behavior).",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f6789"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Like toggled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "examples": {
+                  "liked": { "value": { "message": "Post liked" } },
+                  "disliked": { "value": { "message": "Post disliked" } }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/comment/create-comment": {
+      "post": {
+        "tags": ["Comments"],
+        "summary": "Add a comment to a post",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CommentCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Comment" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/comment/read-comment/{postId}": {
+      "get": {
+        "tags": ["Comments"],
+        "summary": "Get all comments on a post",
+        "description": "Public route — no authentication required.",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f6789"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Comment" }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/comment/delete-comment/{id}": {
+      "delete": {
+        "tags": ["Comments"],
+        "summary": "Delete a comment",
+        "description": "Only the author of the comment can delete it.",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Comment ID",
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f9999"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment deleted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Comment deleted successfully" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/audience/follow/{targetUserId}": {
+      "post": {
+        "tags": ["Audience"],
+        "summary": "Follow a user",
+        "description": "Follow another user. You cannot follow yourself. If already following, the request is ignored.",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "targetUserId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to follow",
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f2222"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followed successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Followed..." }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (e.g. attempting to follow yourself)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "success": false, "message": "You cannot follow yourself" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/audience/unfollow/{targetUserId}": {
+      "delete": {
+        "tags": ["Audience"],
+        "summary": "Unfollow a user",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "targetUserId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to unfollow",
+            "schema": { "type": "string" },
+            "example": "664f1c2e8b1a2c3d4e5f2222"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unfollowed successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "Unfollowed..." }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/api/ban": {
+      "post": {
+        "tags": ["Moderation"],
+        "summary": "Ban a user",
+        "description": "Admin-only route to ban a user from the platform. Requires JWT authentication with admin privileges.",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BanRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User banned successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" },
+                "example": { "message": "User has been banned" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": {
+            "description": "Forbidden — insufficient privileges",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "success": false, "message": "Access denied" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
       }
     }
   }
