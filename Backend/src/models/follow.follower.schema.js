@@ -10,19 +10,17 @@ const AudienceSchema = new Schema(
             index: true
         },
 
-        followers: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "User"
-            }
-        ],
+        followers: {
+            type: [Schema.Types.ObjectId],
+            ref: "User",
+            default: []
+        },
 
-        following: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "User"
-            }
-        ]
+        following: {
+            type: [Schema.Types.ObjectId],
+            ref: "User",
+            default: []
+        }
     },
     { timestamps: true }
 );

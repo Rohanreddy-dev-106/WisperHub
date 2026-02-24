@@ -1,5 +1,4 @@
 import userModel from "../models/users.schema.js";
-
 export default class UserRepository {
 
   async register(data) {
@@ -7,6 +6,7 @@ export default class UserRepository {
       const user = new userModel(data)
       await user.save();
       return user;
+
 
     } catch (error) {
       if (error.code === 11000) {
