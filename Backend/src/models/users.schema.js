@@ -57,6 +57,9 @@ const UsersSchema = new Schema({
         max: 60,
         required: true
     },
+    followers: { type: Number, default: 0 },
+    following: { type: Number, default: 0 }
+
 
 }, { timestamps: true });
 
