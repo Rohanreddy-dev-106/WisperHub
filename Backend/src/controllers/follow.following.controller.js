@@ -12,6 +12,8 @@ export default class AudienceController {
         try {
             const yourid = req.user.UserID;
             const { targetid } = req.params;
+            console.log(targetid);
+            
 
             if (!targetid) {
                 return res.status(400).json({

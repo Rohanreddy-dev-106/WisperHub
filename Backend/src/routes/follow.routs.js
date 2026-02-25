@@ -8,14 +8,14 @@ const Audience = new AudienceController();
 /**
  * Follow a user
  */
-AudienceRoutes.post("/follow/:targetUserId", jwtAuth, (req, res, next) => {
+AudienceRoutes.post("/follow/:targetid", jwtAuth, (req, res, next) => {
     Audience.Follow(req, res, next);
 });
 
 /**
  * Unfollow a user
  */
-AudienceRoutes.delete("/unfollow/:targetUserId", jwtAuth, (req, res, next) => {
+AudienceRoutes.delete("/unfollow/:targetid", jwtAuth, (req, res, next) => {
     Audience.Unfollow(req, res, next);
 });
 

@@ -10,6 +10,8 @@ export default class Commentcontroller {
     async Comment(req, res) {
         try {
             const { postId, comment } = req.body;
+            console.log(postId);
+            
             const Auther = req.user.UserID;
 
             if (!postId || !comment) {
@@ -41,6 +43,7 @@ export default class Commentcontroller {
     async Deletecomment(req, res) {
         try {
             const { id } = req.params;
+            const {postId}=req.body;
 
             if (!id) {
                 return res.status(400).json({
@@ -49,7 +52,7 @@ export default class Commentcontroller {
                 });
             }
 
-            await this._CommentRepository.deleteComment(id);
+            await this._CommentRepository.deleteComment(id,postId);
 
             res.status(200).json({
                 success: true,

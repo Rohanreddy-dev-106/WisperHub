@@ -1,5 +1,5 @@
 import CommentModel from "../models/comment.schema.js";
-
+import PostModel from "../models/post.schema.js"
 export default class Commentrepo {
 
   async createComment(Auther, postId, comment) {
@@ -8,13 +8,25 @@ export default class Commentrepo {
       Postid: postId,
       Comment: comment
     });
-
-    return await newComment.save();
+    const addcount = await PostModel.findByIdAndUpdate(
+      postId,
+      { $inc: { commentCount: 1 } }
+      , { new: true });
+    await newComment.save();
+    return {
+      commentCount: addcount.commentCount
+    };
   }
 
-  async deleteComment(id) {
-    return await CommentModel.findByIdAndDelete(id);
+  async deleteComment(id, Postid) {
+    const deletecomment = await CommentModel.findByIdAndDelete(id);
+    await PostModel.findByIdAndUpdate(
+      Postid,
+      { $inc: { commentCount: -1 } }
+    );
+    return deletecomment;
   }
+
 
   async readComment(postId) {
     return await CommentModel.find({ Postid: postId });
