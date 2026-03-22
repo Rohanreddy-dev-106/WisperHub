@@ -4,26 +4,28 @@ import UserModel from "../models/users.schema.js";
 
 const UpdateBan = async () => {
     try {
-        let banids = [];
-        const baninfo = await BanModel.find({ expiresAt: { $lte: new Date() } });
+        const expired = await BanModel.find(
+            { expiresAt: { $lte: new Date() } },
+            { anonymousId: 1 }
+        ).lean();
 
-        for (let info of baninfo) {
-            banids.push(info.anonymousId);
-        }
+        if (expired.length === 0) return;
+
+        const banids = expired.map((b) => b.anonymousId);
 
         await UserModel.updateMany(
             { anonymousId: { $in: banids } },
             { $set: { isBanned: false, Baninfo: null } }
         );
-        await BanModel.deleteMany({ anonymousId: { $in: banids } })
+        await BanModel.deleteMany({ anonymousId: { $in: banids } });
 
+        console.log(`[BanCron] Lifted ${banids.length} expired ban(s).`);
     } catch (error) {
-        console.log(error.message);
-        throw new Error("THIS IS A CRON JOB ERROR");
+        console.error("[BanCron] Error:", error.message);
     }
 };
 
 export const startBanCron = () => {
     UpdateBan(); // run once on startup to catch missed jobs
-    cron.schedule("0 0 0 * * *", UpdateBan); // runs every day at 12 AM
+    cron.schedule("0 0 * * *", UpdateBan); // every day at 00:00
 };

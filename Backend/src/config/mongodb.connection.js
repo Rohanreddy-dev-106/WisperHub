@@ -7,10 +7,11 @@ async function MongoDBconnection() {
     }
     try {
         await mongoose.connect(MONGO_URI);
-        console.log("Mongodb is  connected....");
+        console.log("MongoDB connected.");
     } catch (error) {
         console.error("MongoDB connection failed:", error.message);
+        throw error; // let the app crash-fast instead of booting with no DB
     }
-};
+}
 
 export { MongoDBconnection };

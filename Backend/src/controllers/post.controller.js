@@ -1,19 +1,22 @@
 import PostRepo from "../repo/post.repo.js";
 
-const postRepo = new PostRepo();
 export default class PostController {
+    _postRepo;
+
+    constructor() {
+        this._postRepo = new PostRepo();
+    }
 
     async createPost(req, res) {
         try {
             const { text } = req.body;
-            const authorId = req.user.UserID
+            const authorId = req.user.UserID;
 
             if (!text) {
                 return res.status(400).json({ success: false, message: "Text is required" });
             }
 
-            const post = await postRepo.createPost({ authorId, text });
-
+            const post = await this._postRepo.createPost({ authorId, text });
             return res.status(201).json({ success: true, post });
         } catch (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -25,21 +28,13 @@ export default class PostController {
             const { postId } = req.params;
             const { text } = req.body;
             const userId = req.user.UserID;
-            let postowner = await postRepo.findById(postId);
-            if (!postowner) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Post not found"
-                });
-            }
-            if (postowner.authorId.toString() !== userId.toString()) {
-                return res.status(403).json({
-                    success: false,
-                    message: "Unauthorized"
-                });
+
+            if (!text) {
+                return res.status(400).json({ success: false, message: "Text is required" });
             }
 
-            const updatedPost = await postRepo.updatePost(postId, userId, text);
+            // findOneAndUpdate scopes by both postId + authorId → one atomic round-trip
+            const updatedPost = await this._postRepo.updatePost(postId, userId, text);
 
             if (!updatedPost) {
                 return res.status(404).json({ success: false, message: "Post not found or unauthorized" });
@@ -54,9 +49,7 @@ export default class PostController {
     async readPost(req, res) {
         try {
             const userId = req.params.userId || req.user.UserID;
-
-            const posts = await postRepo.readPost(userId);
-
+            const posts = await this._postRepo.readPost(userId);
             return res.status(200).json({ success: true, posts });
         } catch (error) {
             return res.status(500).json({ success: false, message: error.message });
@@ -66,21 +59,10 @@ export default class PostController {
     async deletePost(req, res) {
         try {
             const { postId } = req.params;
-            const userId = req.user.UserID
-            let postowner = await postRepo.findById(postId);
-            if (!postowner) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Post not found"
-                });
-            }
-            if (postowner?.authorId.toString() !== userId.toString()) {
-                return res.status(403).json({
-                    success: false,
-                    message: "Unauthorized"
-                });
-            }
-            const deleted = await postRepo.deletePost(postId, userId);
+            const userId = req.user.UserID;
+
+            // findOneAndDelete scopes by postId + authorId — no extra ownership check needed
+            const deleted = await this._postRepo.deletePost(postId, userId);
 
             if (!deleted) {
                 return res.status(404).json({ success: false, message: "Post not found or unauthorized" });

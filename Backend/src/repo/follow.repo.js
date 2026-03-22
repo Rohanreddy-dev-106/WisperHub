@@ -1,65 +1,58 @@
 import mongoose from "mongoose";
 import AudienceModel from "../models/follow.follower.schema.js";
-import UserModel from "../models/users.schema.js";
 
 export default class Audiencerepository {
 
+    // If this user doesn't have a follow profile yet, create one for them.
+    // We check by userId — if a profile already exists, nothing changes.
+    async createFollowProfileIfNotExists(userId, session) {
+        const alreadyExists = await AudienceModel
+            .findOne({ user: userId })
+            .session(session);
+
+        if (!alreadyExists) {
+            const audience = new AudienceModel({
+                user: userId,
+                followers: [],
+                following: []
+            });
+
+            await audience.save({ session });
+        }
+    }
+
     async followme(yourid, targetid) {
+        if (String(yourid) === String(targetid)) {
+            throw new Error("You cannot follow yourself");
+        }
+
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
-            if (yourid === targetid) {
-                throw new Error("You cannot follow yourself");
-            }
 
-            let users = await UserModel.find({}, { _id: 1 }).session(session);
+            // Make sure both users have a follow profile before we update anything
+            await this.createFollowProfileIfNotExists(yourid, session);
+            await this.createFollowProfileIfNotExists(targetid, session);
 
-            for (const u of users) {
-                const is_present = await AudienceModel.findById(u._id).session(session);
-                if (!is_present) {
-                    await AudienceModel.create(
-                        [{
-                            user: u._id,
-                            followers: [],
-                            following: []
-                        }],
-                        { session }
-                    );
-                }
-            }
-
-            const is_exist = await AudienceModel.findById(targetid).session(session);
-            if (is_exist) {
-                await UserModel.findByIdAndUpdate(
-                    yourid,
-                    { $inc: { following: 1 } },
-                    { session }
-                );
-
-                await UserModel.findByIdAndUpdate(
-                    targetid,
-                    { $inc: { followers: 1 } },
-                    { session }
-                );
-
-                await AudienceModel.findByIdAndUpdate(
-                    targetid,
+            // Atomically add to both sides runs asy task same time
+            await Promise.all([
+                AudienceModel.findOneAndUpdate(
+                    { user: targetid },
                     { $addToSet: { followers: yourid } },
                     { session }
-                );
-
-                await AudienceModel.findByIdAndUpdate(
-                    yourid,
+                ),
+                AudienceModel.findOneAndUpdate(
+                    { user: yourid },
                     { $addToSet: { following: targetid } },
                     { session }
-                );
-            }
+                )
+            ]);
 
             await session.commitTransaction();
             return "Followed...";
         } catch (error) {
             await session.abortTransaction();
-            throw new Error(error.message);
+            throw error;
         } finally {
             session.endSession();
         }
@@ -70,38 +63,24 @@ export default class Audiencerepository {
         try {
             session.startTransaction();
 
-            const is_exist = await AudienceModel.findById(targetid).session(session);
-            if (is_exist) {
-                await UserModel.findByIdAndUpdate(
-                    yourid,
-                    { $inc: { following: -1 } },
-                    { session }
-                );
-
-                await UserModel.findByIdAndUpdate(
-                    targetid,
-                    { $inc: { followers: -1 } },
-                    { session }
-                );
-
-                await AudienceModel.findByIdAndUpdate(
-                    targetid,
+            await Promise.all([
+                AudienceModel.findOneAndUpdate(
+                    { user: targetid },
                     { $pull: { followers: yourid } },
                     { session }
-                );
-
-                await AudienceModel.findByIdAndUpdate(
-                    yourid,
+                ),
+                AudienceModel.findOneAndUpdate(
+                    { user: yourid },
                     { $pull: { following: targetid } },
                     { session }
-                );
-            }
+                )
+            ]);
 
             await session.commitTransaction();
             return "Unfollowed...";
         } catch (error) {
             await session.abortTransaction();
-            throw new Error(error.message);
+            throw error;
         } finally {
             session.endSession();
         }

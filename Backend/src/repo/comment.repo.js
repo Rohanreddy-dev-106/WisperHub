@@ -1,34 +1,44 @@
+import mongoose from "mongoose";
 import CommentModel from "../models/comment.schema.js";
-import PostModel from "../models/post.schema.js"
+import PostModel from "../models/post.schema.js";
+
 export default class Commentrepo {
 
-  async createComment(Auther, postId, comment) {
-    const newComment = new CommentModel({
-      Auther: Auther,
-      Postid: postId,
-      Comment: comment
-    });
-    const addcount = await PostModel.findByIdAndUpdate(
-      postId,
-      { $inc: { commentCount: 1 } }
-      , { new: true });
-    await newComment.save();
-    return {
-      commentCount: addcount.commentCount
-    };
-  }
+    async createComment(Auther, postId, comment) {
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction();
 
-  async deleteComment(id, Postid) {
-    const deletecomment = await CommentModel.findByIdAndDelete(id);
-    await PostModel.findByIdAndUpdate(
-      Postid,
-      { $inc: { commentCount: -1 } }
-    );
-    return deletecomment;
-  }
+            const newComment = await CommentModel.create(
+                [{ Auther, Postid: postId, Comment: comment }],
+                { session }
+            );
 
+            const updatedPost = await PostModel.findByIdAndUpdate(
+                postId,
+                { $inc: { commentCount: 1 } },
+                { new: true, session }
+            );
 
-  async readComment(postId) {
-    return await CommentModel.find({ Postid: postId });
-  }
+            await session.commitTransaction();
+            return { commentCount: updatedPost.commentCount };
+        } catch (error) {
+            await session.abortTransaction();
+            throw error;
+        } finally {
+            session.endSession();
+        }
+    }
+
+    async deleteComment(id, postId) {
+        const deleted = await CommentModel.findByIdAndDelete(id);
+        if (deleted) {
+            await PostModel.findByIdAndUpdate(postId, { $inc: { commentCount: -1 } });
+        }
+        return deleted;
+    }
+
+    async readComment(postId) {
+        return await CommentModel.find({ Postid: postId }).lean();
+    }
 }

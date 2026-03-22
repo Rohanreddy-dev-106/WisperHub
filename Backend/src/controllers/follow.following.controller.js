@@ -12,8 +12,6 @@ export default class AudienceController {
         try {
             const yourid = req.user.UserID;
             const { targetid } = req.params;
-            console.log(targetid);
-            
 
             if (!targetid) {
                 return res.status(400).json({
@@ -29,8 +27,10 @@ export default class AudienceController {
                 message: "Followed successfully"
             });
         } catch (error) {
-            console.log(error.message);
-
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     }
 
@@ -54,8 +54,10 @@ export default class AudienceController {
                 message: "Unfollowed successfully"
             });
         } catch (error) {
-            console.log(error.message);
-
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     }
 }
