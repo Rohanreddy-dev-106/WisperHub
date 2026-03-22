@@ -3,6 +3,8 @@ import jwtAuth from "../middlewares/jwtAuth.js";
 import FollowController from "../controllers/follow.following.controller.js";
 
 const FollowRoutes = express.Router();
+
+//Follow/unFollow controller
 const Follow = new FollowController();
 
 // Follow a user
