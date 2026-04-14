@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  // Animation Variants
   const containerVars = {
     hidden: { opacity: 0 },
     visible: {
@@ -27,16 +26,15 @@ const Footer = () => {
 
   return (
     <motion.footer
+      id='footer' 
       initial='hidden'
       whileInView='visible'
       viewport={{ once: true }}
       variants={containerVars}
       className='relative bg-black border-t border-white/5 py-12 px-6 overflow-hidden'>
-      {/* Subtle background accent */}
       <div className='absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-24 bg-emerald-500/5 blur-[100px] pointer-events-none' />
 
       <div className='max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10'>
-        {/* Left Side: Brand/Creator */}
         <motion.div
           variants={itemVars}
           className='flex flex-col items-center md:items-start gap-2'>
@@ -56,7 +54,6 @@ const Footer = () => {
           </p>
         </motion.div>
 
-        {/* Right Side: Social Links */}
         <motion.div variants={itemVars} className='flex items-center gap-3'>
           {socialLinks.map((link) => (
             <motion.a
@@ -73,7 +70,6 @@ const Footer = () => {
         </motion.div>
       </div>
 
-      {/* Bottom Row */}
       <motion.div
         variants={itemVars}
         className='max-w-6xl mx-auto mt-12 pt-8 border-t border-white/[0.03] flex flex-col md:flex-row justify-between items-center gap-4'>

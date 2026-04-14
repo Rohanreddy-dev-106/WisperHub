@@ -13,11 +13,10 @@ import Nav from "./components/Navbar/Nav.jsx";
 import Hero from "./components/Hero/Hero.jsx";
 import Footer from "./components/Fotter/Fotter.jsx";
 import Explore from "./components/Hero/Explore.jsx";
-
 const NAV_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "Explore", href: "/explore" },
-  { label: "About", href: "/about" },
+  { label: "Home", href: "#home" },
+  { label: "Explore", href: "#explore" },
+  { label: "About", href: "#footer" },
 ];
 
 const HERO_CONTENT = {

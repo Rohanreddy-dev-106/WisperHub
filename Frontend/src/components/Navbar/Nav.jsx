@@ -6,11 +6,8 @@ const Nav = ({ logo, Title, navdata }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  // Detect scroll to change background opacity
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -22,17 +19,17 @@ const Nav = ({ logo, Title, navdata }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`
         flex items-center justify-between
-        px-8 md:px-12 py-4
+        px-8 md:px-12
         sticky top-0 z-[100]
         transition-all duration-300
         ${
           isScrolled
             ? "bg-black/80 backdrop-blur-xl border-b border-white/10 py-3"
-            : "bg-transparent border-b border-transparent"
+            : "bg-transparent border-b border-transparent py-4"
         }
       `}>
-      {/* 1. Logo Section */}
-      <div className='flex items-center gap-3 group cursor-pointer'>
+      {/* Logo → Home */}
+      <a href='#home' className='flex items-center gap-3 group cursor-pointer'>
         <motion.div
           whileHover={{ rotate: 360 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -40,17 +37,21 @@ const Nav = ({ logo, Title, navdata }) => {
           <img
             src={logo}
             alt='logo'
-            className='w-9 h-9 rounded-full border border-emerald-500/30 group-hover:border-emerald-500 transition-colors'
+            className='w-9 h-9 rounded-full border border-emerald-500/30
+                       group-hover:border-emerald-500 transition-colors'
           />
-          <div className='absolute inset-0 rounded-full bg-emerald-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity' />
+          <div
+            className='absolute inset-0 rounded-full bg-emerald-500/20
+                          blur-md opacity-0 group-hover:opacity-100 transition-opacity'
+          />
         </motion.div>
 
         <span className='text-white font-bold text-lg tracking-tighter uppercase'>
           {Title}
         </span>
-      </div>
+      </a>
 
-      {/* 2. Interactive Nav Links */}
+      {/* Nav Links */}
       <ul className='hidden md:flex items-center gap-2'>
         {navdata.map((item, i) => (
           <li
@@ -68,7 +69,6 @@ const Nav = ({ logo, Title, navdata }) => {
               {item.label}
             </a>
 
-            {/* The "Sliding" Background Highlight */}
             <AnimatePresence>
               {hoveredIndex === i && (
                 <motion.div
@@ -76,7 +76,8 @@ const Nav = ({ logo, Title, navdata }) => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className='absolute inset-0 bg-emerald-500/10 rounded-lg border-b border-emerald-500/50 z-0'
+                  className='absolute inset-0 bg-emerald-500/10
+                             rounded-lg border-b border-emerald-500/50 z-0'
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
@@ -84,14 +85,6 @@ const Nav = ({ logo, Title, navdata }) => {
           </li>
         ))}
       </ul>
-
-      {/* 3. Mobile "Ghost" Button (Optional extra for look) */}
-      <div className='md:hidden'>
-        <button className='text-emerald-500 p-2'>
-          <div className='w-6 h-0.5 bg-current mb-1' />
-          <div className='w-6 h-0.5 bg-current' />
-        </button>
-      </div>
     </motion.nav>
   );
 };
