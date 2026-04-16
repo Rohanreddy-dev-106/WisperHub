@@ -17,4 +17,9 @@ FollowRoutes.delete("/unfollow/:targetid", jwtAuth, (req, res, next) => {
     Follow.Unfollow(req, res, next);
 });
 
+// Get follow status
+FollowRoutes.get("/status/:targetid", jwtAuth, (req, res, next) => {
+    Follow.Status(req, res, next);
+});
+
 export default FollowRoutes;

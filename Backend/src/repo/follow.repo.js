@@ -5,10 +5,9 @@ export default class Audiencerepository {
 
     // If this user doesn't have a follow profile yet, create one for them.
     // We check by userId — if a profile already exists, nothing changes.
-    async createFollowProfileIfNotExists(userId, session) {
+    async createFollowProfileIfNotExists(userId) {
         const alreadyExists = await AudienceModel
-            .findOne({ user: userId })
-            .session(session);
+            .findOne({ user: userId });
 
         if (!alreadyExists) {
             const audience = new AudienceModel({
@@ -17,7 +16,7 @@ export default class Audiencerepository {
                 following: []
             });
 
-            await audience.save({ session });
+            await audience.save();
         }
     }
 
@@ -26,63 +25,45 @@ export default class Audiencerepository {
             throw new Error("You cannot follow yourself");
         }
 
-        const session = await mongoose.startSession();
-        try {
-            session.startTransaction();
+        // Make sure both users have a follow profile before we update anything
+        await this.createFollowProfileIfNotExists(yourid);
+        await this.createFollowProfileIfNotExists(targetid);
 
-            // Make sure both users have a follow profile before we update anything
-            await this.createFollowProfileIfNotExists(yourid, session);
-            await this.createFollowProfileIfNotExists(targetid, session);
+        await Promise.all([
+            AudienceModel.findOneAndUpdate(
+                { user: targetid },
+                { $addToSet: { followers: yourid } }
+            ),
+            AudienceModel.findOneAndUpdate(
+                { user: yourid },
+                { $addToSet: { following: targetid } }
+            )
+        ]);
 
-            // Atomically add to both sides runs asy task same time
-            await Promise.all([
-                AudienceModel.findOneAndUpdate(
-                    { user: targetid },
-                    { $addToSet: { followers: yourid } },
-                    { session }
-                ),
-                AudienceModel.findOneAndUpdate(
-                    { user: yourid },
-                    { $addToSet: { following: targetid } },
-                    { session }
-                )
-            ]);
-
-            await session.commitTransaction();
-            return "Followed...";
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
-        }
+        return "Followed...";
     }
 
     async unfollowme(yourid, targetid) {
-        const session = await mongoose.startSession();
-        try {
-            session.startTransaction();
+        await Promise.all([
+            AudienceModel.findOneAndUpdate(
+                { user: targetid },
+                { $pull: { followers: yourid } }
+            ),
+            AudienceModel.findOneAndUpdate(
+                { user: yourid },
+                { $pull: { following: targetid } }
+            )
+        ]);
 
-            await Promise.all([
-                AudienceModel.findOneAndUpdate(
-                    { user: targetid },
-                    { $pull: { followers: yourid } },
-                    { session }
-                ),
-                AudienceModel.findOneAndUpdate(
-                    { user: yourid },
-                    { $pull: { following: targetid } },
-                    { session }
-                )
-            ]);
+        return "Unfollowed...";
+    }
 
-            await session.commitTransaction();
-            return "Unfollowed...";
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
-        }
+    async checkStatus(yourid, targetid) {
+        // Need to check target's followers count and if yourid is in target's followers
+        const targetProfile = await AudienceModel.findOne({ user: targetid });
+        if (!targetProfile) return { isFollowing: false, followerCount: 0 };
+        const followerCount = targetProfile.followers.length;
+        const isFollowing = targetProfile.followers.some(id => String(id) === String(yourid));
+        return { isFollowing, followerCount };
     }
 }

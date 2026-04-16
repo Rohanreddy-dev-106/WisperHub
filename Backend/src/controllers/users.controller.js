@@ -112,13 +112,13 @@ export default class UserController {
             await user_present.save();
 
             const accesstoken = generateAccessToken(user_present);
-            const ACCESS_COOKIE_EXPIRE = 60 * 60 * 1000; // 1 hour
+            const ACCESS_COOKIE_EXPIRE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
             res.cookie("jwtToken", accesstoken, {
                 maxAge: ACCESS_COOKIE_EXPIRE,
                 httpOnly: true,
                 // secure: true,  // enable in production (HTTPS only)
-                sameSite: "strict"
+                sameSite: "lax"
             });
 
             return res.json({ success: true, data: user_present });

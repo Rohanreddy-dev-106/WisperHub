@@ -23,7 +23,8 @@ server.use(express.json())//Postman
 server.use(express.urlencoded({ extended: true }));//Data comming from HTML forms
 server.use(cookieParser())
 server.use(cors({
-  origin: "*" // allow all origins
+  origin: "http://localhost:5173",
+  credentials: true
 }));
 // index.js / server.js
 server.set("trust proxy", false);

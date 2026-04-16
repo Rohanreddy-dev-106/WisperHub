@@ -6,7 +6,7 @@ export default function generateAccessToken(user) {
         process.env.ACCESSTOKEN_KEY,
         {
             algorithm: "HS256",
-            expiresIn: "15m"
+            expiresIn: "7d"
         }
     );
 }

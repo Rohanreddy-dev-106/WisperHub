@@ -60,4 +60,21 @@ export default class AudienceController {
             });
         }
     }
+
+    // STATUS
+    async Status(req, res, next) {
+        try {
+            const yourid = req.user.UserID;
+            const { targetid } = req.params;
+
+            if (!targetid) {
+                return res.status(400).json({ success: false, message: "targetid is required" });
+            }
+
+            const status = await this._Audiencerepo.checkStatus(yourid, targetid);
+            return res.status(200).json({ success: true, data: status });
+        } catch (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+    }
 }

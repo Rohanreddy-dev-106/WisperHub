@@ -56,6 +56,28 @@ export default class PostController {
         }
     }
 
+    async readAllPosts(req, res) {
+        try {
+            const posts = await this._postRepo.readAllPosts();
+            return res.status(200).json({ success: true, posts });
+        } catch (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    async readOnePost(req, res) {
+        try {
+            const { postId } = req.params;
+            const post = await this._postRepo.findById(postId);
+            if (!post) {
+                return res.status(404).json({ success: false, message: "Post not found" });
+            }
+            return res.status(200).json({ success: true, post });
+        } catch (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
     async deletePost(req, res) {
         try {
             const { postId } = req.params;

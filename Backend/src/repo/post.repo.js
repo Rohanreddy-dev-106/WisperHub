@@ -15,7 +15,17 @@ export default class PostRepo {
     }
 
     async readPost(userId) {
-        return await PostModel.find({ authorId: userId }).lean();
+        return await PostModel.find({ authorId: userId })
+            .populate("authorId", "Uniqueid Username Avatar")
+            .lean()
+            .sort({ createdAt: -1 });
+    }
+
+    async readAllPosts() {
+        return await PostModel.find({})
+            .populate("authorId", "Uniqueid Username Avatar")
+            .lean()
+            .sort({ createdAt: -1 });
     }
 
     async deletePost(postId, userId) {
@@ -23,6 +33,6 @@ export default class PostRepo {
     }
 
     async findById(postId) {
-        return await PostModel.findById(postId);
+        return await PostModel.findById(postId).populate("authorId", "Uniqueid Username Avatar").lean();
     }
 }

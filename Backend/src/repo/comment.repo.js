@@ -5,29 +5,13 @@ import PostModel from "../models/post.schema.js";
 export default class Commentrepo {
 
     async createComment(Auther, postId, comment) {
-        const session = await mongoose.startSession();
-        try {
-            session.startTransaction();
-
-            const newComment = await CommentModel.create(
-                [{ Auther, Postid: postId, Comment: comment }],
-                { session }
-            );
-
-            const updatedPost = await PostModel.findByIdAndUpdate(
-                postId,
-                { $inc: { commentCount: 1 } },
-                { new: true, session }
-            );
-
-            await session.commitTransaction();
-            return { commentCount: updatedPost.commentCount };
-        } catch (error) {
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
-        }
+        const newComment = await CommentModel.create({ Auther, Postid: postId, Comment: comment });
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            postId,
+            { $inc: { commentCount: 1 } },
+            { new: true }
+        );
+        return { commentCount: updatedPost.commentCount };
     }
 
     async deleteComment(id, postId) {
@@ -39,6 +23,6 @@ export default class Commentrepo {
     }
 
     async readComment(postId) {
-        return await CommentModel.find({ Postid: postId }).lean();
+        return await CommentModel.find({ Postid: postId }).populate("Auther", "Uniqueid Avatar").lean();
     }
 }
