@@ -13,7 +13,34 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const avatarOptions = ["🎭", "👤", "🐱", "🦊", "🐸", "🌙", "⚡", "🔥", "💀", "🤖"];
+  const avatarOptions = [
+    "🎭",
+    "🫥",
+    "😶‍🌫️",
+    "👀",
+    "🌚",
+    "💀",
+    "🤡",
+    "🕶️",
+    "🖤",
+    "🔥",
+    "🧠",
+    "⚡",
+    "🌙",
+    "🕳️",
+    "🧃",
+    "🤖",
+    "✨",
+    "😵‍💫",
+    "🫠",
+    "🔒",
+    "👤",
+    "🌫️",
+    "👁️",
+    "🗣️",
+    "❓",
+    "🪦",
+  ];
 
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
