@@ -20,12 +20,14 @@ const server = express();
 const data = JSON.parse(readFileSync("./swagger_ui.json", 'utf8'));
 server.use("/api-doc-wisperhub", swagger.serve, swagger.setup(data))
 server.use(express.json())//Postman
-server.use(express.urlencoded({ extended: true }));//Data comming from HTML forms
+server.use(express.urlencoded({ extended: true }));//Data comming from HTML/React forms
 server.use(cookieParser())
+
 server.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
+
 // index.js / server.js
 server.set("trust proxy", false);
 const rateLimitMiddleware = rateLimit({
@@ -49,8 +51,7 @@ catch (error) {
 }
 
 
-//server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
-
+server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
 
 server.use("/api/user", UserRoutes);
 server.use("/api/ban",BanRoutes);
@@ -60,7 +61,7 @@ server.use("/api/comment",CommentRoutes);
 server.use("/api/audience",AudienceRoutes);
 
 
-server.use((req, res, next) => {
+server.use("api-doc",(req, res, next) => {
   res.status(404).send(` <!DOCTYPE html>
 <html lang="en">
 <head>

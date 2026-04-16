@@ -19,7 +19,7 @@ import PostDetailPage from "./pages/PostDetailPage";
 import ExplorePage from "./pages/ExplorePage";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -41,5 +41,4 @@ createRoot(document.getElementById("root")).render(
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  </StrictMode>
 );

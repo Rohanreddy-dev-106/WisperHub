@@ -16,6 +16,8 @@ export default function ProfilePage() {
   const [following, setFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [profileData, setProfileData] = useState(null);
 
   const isOwnProfile =
     currentUser?._id === userId || currentUser?.id === userId;
@@ -33,6 +35,8 @@ export default function ProfilePage() {
         if (statusRes.data?.data) {
           setFollowing(statusRes.data.data.isFollowing);
           setFollowersCount(statusRes.data.data.followerCount);
+          setFollowingCount(statusRes.data.data.followingCount);
+          setProfileData(statusRes.data.data.user);
         }
       } catch (err) {
         // Non-critical, ignore if follow status fails
@@ -71,9 +75,10 @@ export default function ProfilePage() {
     setPosts((prev) => prev.filter((p) => p._id !== postId));
   };
 
-  const authorObj = posts[0]?.authorId;
+  const authorObj = profileData || posts[0]?.authorId;
   const displayName = authorObj?.Uniqueid || `user_${userId?.slice(-5)}`;
   const avatar = authorObj?.Avatar || "🎭";
+  const bio = authorObj?.Bio;
 
   return (
     <div className="page">
@@ -93,7 +98,14 @@ export default function ProfilePage() {
               <span><b>{posts.length}</b> {posts.length === 1 ? "post" : "posts"}</span>
               <span style={{ margin: "0 0.5rem", opacity: 0.5 }}>•</span>
               <span><b>{followersCount}</b> {followersCount === 1 ? "follower" : "followers"}</span>
+              <span style={{ margin: "0 0.5rem", opacity: 0.5 }}>•</span>
+              <span><b>{followingCount}</b> following</span>
             </p>
+            {bio && (
+              <p className="profile-header__bio" style={{ marginTop: '0.8rem', fontSize: '0.95rem', color: 'var(--neutral-300)' }}>
+                {bio}
+              </p>
+            )}
           </div>
 
           {!isOwnProfile && currentUser && (

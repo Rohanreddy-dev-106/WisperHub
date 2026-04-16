@@ -61,9 +61,20 @@ export default class Audiencerepository {
     async checkStatus(yourid, targetid) {
         // Need to check target's followers count and if yourid is in target's followers
         const targetProfile = await AudienceModel.findOne({ user: targetid });
-        if (!targetProfile) return { isFollowing: false, followerCount: 0 };
-        const followerCount = targetProfile.followers.length;
-        const isFollowing = targetProfile.followers.some(id => String(id) === String(yourid));
-        return { isFollowing, followerCount };
+        
+        let followerCount = 0;
+        let followingCount = 0;
+        let isFollowing = false;
+        
+        if (targetProfile) {
+            followerCount = targetProfile.followers.length;
+            followingCount = targetProfile.following.length;
+            isFollowing = targetProfile.followers.some(id => String(id) === String(yourid));
+        }
+
+        const UserModel = mongoose.model("User");
+        const targetUser = await UserModel.findById(targetid).select("Bio Uniqueid Avatar");
+
+        return { isFollowing, followerCount, followingCount, user: targetUser };
     }
 }
