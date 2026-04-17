@@ -124,13 +124,16 @@ img {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--neutral-950);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--neutral-700);
   border-radius: var(--radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-600);
 }
@@ -166,6 +169,7 @@ img {
   letter-spacing: -0.02em;
   transition: color var(--transition-fast);
 }
+
 .app-nav__brand:hover {
   color: var(--emerald-300);
 }
@@ -182,9 +186,11 @@ img {
   display: flex;
   align-items: center;
 }
+
 .app-nav__icon-btn:hover {
   color: var(--white);
 }
+
 .app-nav__icon-btn--danger:hover {
   color: var(--red-400);
 }
@@ -216,21 +222,21 @@ img {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.12) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(16, 185, 129, 0.12) 0%,
+      transparent 70%);
   border-radius: 50%;
   animation: heroFloat 8s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes heroFloat {
+
   0%,
   100% {
     transform: translate(-10%, -10%) scale(1);
   }
+
   50% {
     transform: translate(10%, 10%) scale(1.15);
   }
@@ -276,6 +282,7 @@ img {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -301,6 +308,7 @@ img {
   transition: border-color var(--transition-base),
     transform var(--transition-base);
 }
+
 .feature-card:hover {
   border-color: var(--neutral-700);
   transform: translateY(-2px);
@@ -351,6 +359,7 @@ img {
   padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
 }
+
 .btn--primary:hover {
   background: var(--emerald-400);
 }
@@ -362,6 +371,7 @@ img {
   font-size: 0.875rem;
   border: 1px solid var(--neutral-700);
 }
+
 .btn--outline:hover {
   border-color: var(--neutral-500);
   color: var(--white);
@@ -388,6 +398,7 @@ img {
   padding: 0.5rem;
   font-size: 0.875rem;
 }
+
 .btn--ghost:hover {
   color: var(--white);
 }
@@ -400,6 +411,7 @@ img {
 .btn--danger-text {
   color: var(--neutral-400);
 }
+
 .btn--danger-text:hover {
   color: var(--red-400);
 }
@@ -407,6 +419,7 @@ img {
 .btn--warn-text {
   color: var(--neutral-400);
 }
+
 .btn--warn-text:hover {
   color: var(--yellow-400);
 }
@@ -535,6 +548,7 @@ img {
 .auth-footer a {
   color: var(--emerald-400);
 }
+
 .auth-footer a:hover {
   text-decoration: underline;
 }
@@ -548,6 +562,7 @@ img {
   color: var(--neutral-600);
   transition: color var(--transition-fast);
 }
+
 .auth-back a:hover {
   color: var(--neutral-400);
 }
@@ -683,21 +698,26 @@ img {
 .skeleton-line--quarter {
   width: 25%;
 }
+
 .skeleton-line--half {
   width: 50%;
 }
+
 .skeleton-line--three-quarter {
   width: 75%;
 }
+
 .skeleton-line--full {
   width: 100%;
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -717,6 +737,7 @@ img {
   gap: var(--space-3);
   transition: border-color var(--transition-base);
 }
+
 .post-card:hover {
   border-color: var(--neutral-700);
 }
@@ -739,6 +760,7 @@ img {
   font-weight: 500;
   transition: color var(--transition-fast);
 }
+
 .post-card__author:hover {
   text-decoration: underline;
 }
@@ -802,6 +824,7 @@ img {
 .post-card__action-btn--liked {
   color: var(--red-400);
 }
+
 .post-card__action-btn--liked:hover {
   color: var(--red-400);
 }
@@ -841,6 +864,7 @@ img {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -864,6 +888,7 @@ img {
     opacity: 0;
     transform: translateY(16px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -887,6 +912,7 @@ img {
   transition: color var(--transition-fast);
   display: flex;
 }
+
 .modal-box__close:hover {
   color: var(--white);
 }
@@ -914,6 +940,7 @@ img {
   border: none;
   cursor: pointer;
 }
+
 .modal-form__attach:hover {
   color: var(--emerald-400);
 }
@@ -993,6 +1020,7 @@ img {
   transition: color var(--transition-fast);
   display: flex;
 }
+
 .comment-item__delete:hover {
   color: var(--red-400);
 }
@@ -1063,6 +1091,7 @@ img {
   background: var(--emerald-500);
   color: var(--black);
 }
+
 .btn--follow:hover {
   background: var(--emerald-400);
 }
@@ -1072,6 +1101,7 @@ img {
   color: var(--neutral-300);
   border: 1px solid var(--neutral-700);
 }
+
 .btn--unfollow:hover {
   background: var(--neutral-700);
 }
@@ -1091,6 +1121,7 @@ img {
   border: none;
   cursor: pointer;
 }
+
 .back-link:hover {
   color: var(--white);
 }
@@ -1114,6 +1145,7 @@ img {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

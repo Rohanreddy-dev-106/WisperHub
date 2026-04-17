@@ -5,7 +5,7 @@ import {
   deleteComment,
 } from "../../services/comment.service";
 import { useAuth } from "../../context/AuthContext";
-import { FiSend, FiTrash2 } from "react-icons/fi";
+import { FiSend } from "react-icons/fi";
 
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
@@ -110,15 +110,7 @@ export default function CommentSection({ postId }) {
                 {/* Backend field is "Comment", not "content" */}
                 <p className="comment-item__text">{c.Comment}</p>
               </div>
-              {/* Ownership check */}
-              {isOwner && (
-                  <button
-                    onClick={() => handleDelete(c._id)}
-                    className="comment-item__delete"
-                  >
-                    <FiTrash2 size={14} />
-                  </button>
-              )}
+
             </li>
           )})}
         </ul>

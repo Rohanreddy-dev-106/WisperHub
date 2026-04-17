@@ -1,7 +1,8 @@
+/** @format */
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FiLogOut, FiUser, FiHome, FiGlobe } from "react-icons/fi";
-
 export default function AppNav() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -12,33 +13,39 @@ export default function AppNav() {
   };
 
   return (
-    <nav className="app-nav">
-      <div className="app-nav__inner">
-        <Link to="/feed" className="app-nav__brand">
+    <nav className='app-nav'>
+      <div className='app-nav__inner container'>
+        {" "}
+        {/* Added container for alignment */}
+        <Link to='/feed' className='brand-logo'>
           WisperHub
         </Link>
-        <div className="app-nav__actions">
-          <Link to="/feed" className="app-nav__icon-btn" title="Feed">
-            <FiHome size={20} />
+        <div className='app-nav__actions'>
+          <Link to='/feed' className='nav-icon-link nav-icon-home' title='Feed'>
+            <FiHome size={22} />
           </Link>
-          <Link to="/explore" className="app-nav__icon-btn" title="Explore">
-            <FiGlobe size={20} />
+
+          <Link
+            to='/explore'
+            className='nav-icon-link nav-icon-globe'
+            title='Explore'>
+            <FiGlobe size={22} />
           </Link>
+
           {user && (
             <Link
               to={`/profile/${user._id || user.id}`}
-              className="app-nav__icon-btn"
-              title="Profile"
-            >
-              <FiUser size={20} />
+              className='nav-icon-link nav-icon-user'
+              title='Profile'>
+              <FiUser size={22} />
             </Link>
           )}
+
           <button
             onClick={handleLogout}
-            className="app-nav__icon-btn app-nav__icon-btn--danger"
-            title="Logout"
-          >
-            <FiLogOut size={20} />
+            className='nav-icon-link nav-icon-logout'
+            title='Logout'>
+            <FiLogOut size={22} />
           </button>
         </div>
       </div>
