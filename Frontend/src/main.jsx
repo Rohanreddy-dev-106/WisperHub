@@ -18,27 +18,31 @@ import ProfilePage from "./pages/ProfilePage";
 import PostDetailPage from "./pages/PostDetailPage";
 import ExplorePage from "./pages/ExplorePage";
 
+import ApiDocsPage from "./pages/ApiDocsPage";
+
 createRoot(document.getElementById("root")).render(
-  
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<App />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+  <AuthProvider>
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path='/' element={<App />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
 
-          {/* Protected – requires authentication */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="/explore" element={<ExplorePage />} />
-            <Route path="/profile/:userId" element={<ProfilePage />} />
-            <Route path="/post/:postId" element={<PostDetailPage />} />
-          </Route>
+        {/* Protected – requires authentication */}
+        <Route element={<ProtectedRoute />}>
+          <Route path='/feed' element={<FeedPage />} />
+          <Route path='/explore' element={<ExplorePage />} />
+          <Route path='/profile/:userId' element={<ProfilePage />} />
+          <Route path='/post/:postId' element={<PostDetailPage />} />
+        </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<LoginPage />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        {/* Fallback */}
+         <Route
+            path="/api-doc-wisperhub"
+            element={<ApiDocsPage />}
+          />
+      </Routes>
+    </BrowserRouter>
+  </AuthProvider>,
 );

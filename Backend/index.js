@@ -17,8 +17,14 @@ dotenv.config();
 
 const server = express();
 //Api Documentation using swagger..
-const data = JSON.parse(readFileSync("./swagger_ui.json", 'utf8'));
-server.use("/api-doc-wisperhub", swagger.serve, swagger.setup(data))
+const swaggerData = JSON.parse(
+  readFileSync("./swagger_ui.json", "utf8")
+);
+server.use(
+  "/api-doc-wisperhub",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerData)
+);
 server.use(express.json())//Postman
 server.use(express.urlencoded({ extended: true }));//Data comming from HTML/React forms
 server.use(cookieParser())
@@ -60,126 +66,27 @@ server.use("/api/like",LikeRoutes);
 server.use("/api/comment",CommentRoutes);
 server.use("/api/audience",AudienceRoutes);
 
-
-server.use("api-doc",(req, res, next) => {
-  res.status(404).send(` <!DOCTYPE html>
-<html lang="en">
+server.use("/api", (req, res) => {
+  res.status(404).send(`<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>WisperHub • 404</title>
-
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", system-ui, sans-serif;
-  }
-
-  body {
-    background: #000;
-    color: #fff;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .container {
-    text-align: center;
-    max-width: 420px;
-    padding: 40px;
-  }
-
-  h1 {
-    font-size: 2.4rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-
-  .tagline {
-    font-size: 0.8rem;
-    opacity: 0.6;
-    margin-top: 6px;
-  }
-
-  .divider {
-    width: 70px;
-    height: 1px;
-    background: #fff;
-    opacity: 0.25;
-    margin: 30px auto;
-  }
-
-  .error-code {
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: 6px;
-    margin-bottom: 10px;
-  }
-
-  .error-title {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-  }
-
-  .error-message {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    line-height: 1.6;
-    margin-bottom: 30px;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 12px 30px;
-    border: 1px solid #fff;
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    transition: 0.3s ease;
-  }
-
-  .btn:hover {
-    background: #fff;
-    color: #000;
-  }
-
-  footer {
-    margin-top: 40px;
-    font-size: 0.7rem;
-    opacity: 0.4;
-  }
+body{margin:0;background:#000;color:#fff;font-family:Inter,sans-serif;
+display:flex;align-items:center;justify-content:center;height:100vh}
+.container{text-align:center}
+.btn{padding:12px 30px;border:1px solid #fff;color:#fff;text-decoration:none}
+.btn:hover{background:#fff;color:#000}
 </style>
 </head>
-
 <body>
-
 <div class="container">
-  <h1>WisperHub</h1>
-  <p class="tagline">Anonymous Social Network</p>
-
-  <div class="divider"></div>
-
-  <div class="error-code">404</div>
-  <div class="error-title">Endpoint Not Found</div>
-  <div class="error-message">
-    The requested API route does not exist or has been removed.
-    Please refer to the official documentation.
-  </div>
-
-  <a href="/api-doc-wisperhub" class="btn">Go to API Docs</a>
-
-  <footer>
-    © 2026 WisperHub • Privacy First
-  </footer>
+<h1>404</h1>
+<p>API Endpoint Not Found</p>
+<a href="/api-doc-wisperhub" class="btn">API Docs</a>
 </div>
-
 </body>
-</html>
- `)
-})
+</html>`);
+});
 
 export default server;
