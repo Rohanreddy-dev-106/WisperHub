@@ -18,6 +18,7 @@ import ProfilePage from "./pages/ProfilePage";
 import PostDetailPage from "./pages/PostDetailPage";
 import ExplorePage from "./pages/ExplorePage";
 
+//Aip documentation 
 import ApiDocsPage from "./pages/ApiDocsPage";
 
 createRoot(document.getElementById("root")).render(
