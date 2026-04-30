@@ -20,11 +20,8 @@ const server = express();
 const swaggerData = JSON.parse(
   readFileSync("./swagger_ui.json", "utf8")
 );
-server.use(
-  "/api-doc-wisperhub",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerData)
-);
+
+
 server.use(express.json())//Postman
 server.use(express.urlencoded({ extended: true }));//Data comming from HTML/React forms
 server.use(cookieParser())
@@ -44,7 +41,7 @@ server.set("trust proxy", false);
 // UA Parser Middleware
 server.use((req, res, next) => {
   const parser = new UAParser(req.headers["user-agent"]);
-  req.useragent = parser.getResult(); 
+  req.useragent = parser.getResult();
   next();
 });
 
@@ -60,11 +57,11 @@ catch (error) {
 // server.use("/api", rateLimitMiddleware);//apply to all routs starts with /api
 
 server.use("/api/user", UserRoutes);
-server.use("/api/ban",BanRoutes);
-server.use("/api/post",PostRoutes);
-server.use("/api/like",LikeRoutes);
-server.use("/api/comment",CommentRoutes);
-server.use("/api/audience",AudienceRoutes);
+server.use("/api/ban", BanRoutes);
+server.use("/api/post", PostRoutes);
+server.use("/api/like", LikeRoutes);
+server.use("/api/comment", CommentRoutes);
+server.use("/api/audience", AudienceRoutes);
 
 server.use("/api", (req, res) => {
   res.status(404).send(`<!DOCTYPE html>

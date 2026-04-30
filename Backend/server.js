@@ -3,7 +3,7 @@ import { MongoDBconnection } from "./src/config/mongodb.connection.js";
 import generateAnonymousId from "./src/util/generateAnonymousId.js";
 const PORT = process.env.PORT
 server.listen(PORT, async() => {
-    MongoDBconnection();
+   await MongoDBconnection();
     console.log(`Server is Up and Running at PORT ${PORT}`);
        const username = await generateAnonymousId();
        
