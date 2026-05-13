@@ -20,9 +20,9 @@ const UsersSchema = new Schema({
         default: null
     },
 
-    IpHistory: [{
-        type: String
-    }],
+    IpHistory: {
+        type: [String]
+    },
 
     UserDevice: {
         type: String,
